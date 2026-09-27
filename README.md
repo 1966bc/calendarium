@@ -29,6 +29,16 @@ sudo apt install python3-tk
 pip install calendarium
 ```
 
+Debian 12, Ubuntu 23.04 and later refuse `pip install` outside a virtual
+environment (`error: externally-managed-environment`). Create one first; it
+uses the system Tk, so `python3-tk` is all it needs:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install calendarium
+.venv/bin/python your_program.py
+```
+
 Or copy `calendarium.py` next to your code: it is one file with no
 dependencies, so that is all it takes, also on a machine without pip.
 

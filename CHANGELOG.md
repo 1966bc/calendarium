@@ -20,7 +20,8 @@ git log.
   through `<<DateChanged>>`. A **Date format** choice (Europe, USA, ISO)
   rebuilds the two widgets in the new order, keeping what was typed.
 - README: a section on the date format, `order` and `labels`; installation
-  with pip; absolute links, which PyPI needs.
+  with pip, and in a virtual environment where the system refuses it
+  (`externally-managed-environment`); absolute links, which PyPI needs.
 
 ## [2.5] - 2026-09-27
 
