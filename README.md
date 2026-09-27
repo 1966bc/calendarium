@@ -60,6 +60,40 @@ start_date = TtkCalendarium(root, "Data inizio",
                             labels=("Giorno", "Mese", "Anno"), order="ymd")
 ```
 
+## Date format: European, American, ISO
+
+The `order` argument decides the order of the three fields on screen:
+
+| `order` | fields on screen | used in |
+|---|---|---|
+| `"dmy"` (default) | Day · Month · Year | Europe and most of the world |
+| `"mdy"` | Month · Day · Year | United States |
+| `"ymd"` | Year · Month · Day | ISO 8601, China, Japan, Korea |
+
+```python
+european = Calendarium(root, "Start Date")                # 27 · 9 · 2026
+american = Calendarium(root, "Start Date", order="mdy")   # 9 · 27 · 2026
+iso      = Calendarium(root, "Start Date", order="ymd")   # 2026 · 9 · 27
+```
+
+What changes is **only what the user sees**. The date itself is the same:
+`get_date()` returns the same `datetime.date` and `get_iso()` the same
+`"2026-09-27"` whatever the order, so the rest of your program does not need
+to know which format the user chose.
+
+`labels` names the fields in your language. They are always given as day,
+month, year, whatever the order on screen:
+
+```python
+Calendarium(root, "Data inizio", labels=("Giorno", "Mese", "Anno"))
+Calendarium(root, "Start Date", order="mdy")              # Month · Day · Year
+```
+
+The order is fixed when the widget is built. To let the user switch format
+while the program runs, build the widget again in the new order and copy the
+three fields across (`day`, `month`, `year` are `StringVar`s): the demo does
+exactly this, with its **Date format** choice.
+
 ## Constructor
 
 ```python
@@ -125,8 +159,10 @@ idle. It arrives even if the widget has not been displayed yet.
 python3 examples/demo.py
 ```
 
-The period between two dates, using every part of the API. For a quick look at
-the two classes side by side:
+The period between two dates, recalculated as you type. The **Date format**
+choice switches the fields between European, American and ISO order, keeping
+what you typed; **Lock** disables them. For a quick look at the two classes
+side by side:
 
 ```bash
 python3 calendarium.py

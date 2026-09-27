@@ -3,6 +3,15 @@
 All notable changes to Calendarium, newest first. Earlier history is in the
 git log.
 
+## [Unreleased]
+
+### Changed
+
+- Demo: the Period button is gone - the period is recalculated as you type,
+  through `<<DateChanged>>`. A **Date format** choice (Europe, USA, ISO)
+  rebuilds the two widgets in the new order, keeping what was typed.
+- README: a section on the date format, `order` and `labels`.
+
 ## [2.5] - 2026-09-27
 
 ### Added
