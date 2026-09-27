@@ -8,9 +8,12 @@ standard library only: copy it into your project and use it.
 
 - **No dependencies** — `tkinter` and `datetime`, nothing to install.
 - **One file** — `calendarium.py`, nothing else to carry around.
-- **Keyboard first** — the operator types the date; no pop-up calendar to click through.
+- **Keyboard first** — the user types the date; no pop-up calendar to click through.
 - **Digits only** — letters and signs are refused as they are typed.
 - **A date or `None`** — never a half-valid value: 31 February is `None`.
+- **tk or ttk** — `Calendarium` for the classic look, `TtkCalendarium` to follow the ttk theme.
+- **Any language, any order** — your own labels; day-month-year, month-day-year or year-month-day.
+- **`<<DateChanged>>`** — a virtual event whenever the date changes.
 
 ## Requirements
 
@@ -48,20 +51,38 @@ root.mainloop()
 
 Use either `grid` or `pack` on the same parent, not both.
 
+The same with ttk, Italian labels and the year first:
+
+```python
+from calendarium import TtkCalendarium
+
+start_date = TtkCalendarium(root, "Data inizio",
+                            labels=("Giorno", "Mese", "Anno"), order="ymd")
+```
+
 ## Constructor
 
 ```python
 Calendarium(parent, name, *, base_bg_color=None,
-            year_from=datetime.MINYEAR, year_to=datetime.MAXYEAR, **kwargs)
+            year_from=datetime.MINYEAR, year_to=datetime.MAXYEAR,
+            labels=("Day", "Month", "Year"), order="dmy", **kwargs)
+
+TtkCalendarium(parent, name, *,
+               year_from=datetime.MINYEAR, year_to=datetime.MAXYEAR,
+               labels=("Day", "Month", "Year"), order="dmy", **kwargs)
 ```
 
 | argument | meaning |
 |---|---|
 | `parent` | the parent widget |
 | `name` | the caption of the frame, e.g. `"Start Date"`; `""` for none |
-| `base_bg_color` | background, as `"#f0f0ed"` or `(240, 240, 237)`; an invalid colour falls back to the theme |
+| `base_bg_color` | `Calendarium` only: background, as `"#f0f0ed"` or `(240, 240, 237)`; an invalid colour falls back to the theme. With ttk, colours belong to the style |
 | `year_from`, `year_to` | the range of years accepted; outside it the date is not valid |
-| `**kwargs` | passed on to `tk.LabelFrame` |
+| `labels` | the captions of the three fields, always given as day, month, year — whatever the order on screen |
+| `order` | `"dmy"` (default), `"mdy"` or `"ymd"`: the order of the fields on screen |
+| `**kwargs` | passed on to `tk.LabelFrame` or `ttk.LabelFrame` |
+
+A wrong `order` or a `labels` that is not three texts raises `ValueError`.
 
 ## Methods
 
@@ -85,6 +106,19 @@ Calendarium(parent, name, *, base_bg_color=None,
 
 The three fields are also available as `StringVar`s: `day`, `month`, `year`.
 
+## Following changes
+
+```python
+from calendarium import DATE_CHANGED   # "<<DateChanged>>"
+
+start_date.bind(DATE_CHANGED, on_date_changed)
+```
+
+The event is generated when the date changes by typing, by the arrows or by
+a `set_` method, and also when it becomes invalid: check `is_valid` in the
+handler. `set_date` writes three fields but generates one event, when Tk is
+idle. It arrives even if the widget has not been displayed yet.
+
 ## Demo
 
 ```bash
@@ -92,7 +126,7 @@ python3 examples/demo.py
 ```
 
 The period between two dates, using every part of the API. For a quick look at
-the widget alone:
+the two classes side by side:
 
 ```bash
 python3 calendarium.py
@@ -124,7 +158,5 @@ docs/               the screenshot
 MIT, see [LICENSE](LICENSE).
 
 Author: Giuseppe Costanzi ([1966bc](https://github.com/1966bc)).
-Calendarium is used in his laboratory applications, such as
-[inventarium](https://github.com/1966bc/inventarium).
 
 Calendarium is primitive, but it works and it's light.

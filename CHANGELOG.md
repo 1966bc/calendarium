@@ -3,6 +3,30 @@
 All notable changes to Calendarium, newest first. Earlier history is in the
 git log.
 
+## [2.5] - 2026-09-27
+
+### Added
+
+- `TtkCalendarium`: the same widget and API, built from ttk widgets so it
+  follows the ttk theme. `Calendarium` stays tk and unchanged.
+- `labels=`: the captions of the three fields, e.g.
+  `("Giorno", "Mese", "Anno")`. Always given as day, month, year.
+- `order=`: `"dmy"` (default), `"mdy"` or `"ymd"`, the order of the fields
+  on screen. A wrong order or labels raise `ValueError` before any widget
+  is created.
+- `<<DateChanged>>` (also `calendarium.DATE_CHANGED`): a virtual event when
+  the date changes, by typing, by the arrows or by a `set_` method. One
+  event per change, even when `set_date` writes three fields, and it
+  arrives even if the widget has not been displayed yet.
+- Tests run on both classes: 87 in all.
+
+### Changed
+
+- The day, month and year variables belong to the widget (`StringVar(self)`)
+  instead of the default root.
+- The demo follows the dates as they change, through `<<DateChanged>>`.
+- `python3 calendarium.py` shows both classes side by side.
+
 ## [2.4] - 2026-09-27
 
 ### Added

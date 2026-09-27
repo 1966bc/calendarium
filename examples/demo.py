@@ -8,8 +8,9 @@
 
 Every call goes through the public API, so this is also the place to copy
 from: set_date, set_days_ago and set_today to fill a field, is_valid and
-get_date to read it, get_iso to store it, set_state to lock it and
-set_focus to point the operator at the one that is wrong.
+get_date to read it, get_iso to store it, set_state to lock it, set_focus
+to point the user at the one that is wrong, and <<DateChanged>> to follow
+every change as it happens.
 
     python3 examples/demo.py
 """
@@ -26,7 +27,7 @@ from tkinter import ttk
 # copy of its own, which is how copies drift apart.
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from calendarium import Calendarium  # noqa: E402
+from calendarium import DATE_CHANGED, Calendarium  # noqa: E402
 from icon import PNG  # noqa: E402
 
 
@@ -45,6 +46,8 @@ class Main(ttk.Frame):
         self.end_date = Calendarium(dates, "End Date", year_from=1900, year_to=2100)
         self.start_date.pack(fill=tk.X, pady=(0, 6))
         self.end_date.pack(fill=tk.X)
+        for calendar in (self.start_date, self.end_date):
+            calendar.bind(DATE_CHANGED, self.on_date_changed)
         dates.grid(row=0, column=0, sticky=tk.NW)
 
         commands = ttk.Frame(self)
@@ -71,27 +74,30 @@ class Main(ttk.Frame):
         self.end_date.set_today()
         self.on_period()
 
-    def get_period(self):
-        """Both dates, or None after pointing at the first one that is wrong."""
+    def show_period(self, focus):
+        """Say what the two dates make; with focus, point at the wrong one."""
         for calendar in (self.start_date, self.end_date):
             if not calendar.is_valid:
                 self.result.set(f"{calendar.cget('text')} is not a valid date")
-                calendar.set_focus()
-                return None
-        return self.start_date.get_date(), self.end_date.get_date()
-
-    def on_period(self, evt=None):
-        period = self.get_period()
-        if period is None:
-            return
-        start, end = period
+                if focus:
+                    calendar.set_focus()
+                return
+        start, end = self.start_date.get_date(), self.end_date.get_date()
         if start > end:
             self.result.set("Start Date comes after End Date")
-            self.start_date.set_focus()
+            if focus:
+                self.start_date.set_focus()
             return
         days = (end - start).days
         self.result.set(
             f"From {self.start_date.get_iso()} to {self.end_date.get_iso()}: {days} days")
+
+    def on_date_changed(self, evt=None):
+        # While typing, only say it: moving the focus would get in the way.
+        self.show_period(focus=False)
+
+    def on_period(self, evt=None):
+        self.show_period(focus=True)
 
     def on_last_30_days(self, evt=None):
         if self.locked:
