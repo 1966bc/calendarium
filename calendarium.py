@@ -1,31 +1,31 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# modify:   ver MMXXV 
+#!/usr/bin/python3
+# -----------------------------------------------------------------------------
+# project:  calendarium
+# authors:  1966bc aka Giuseppe Costanzi
+# licence:  MIT, see LICENSE
+# -----------------------------------------------------------------------------
 """
-Calendarium - A primitive calendar date widget for Tkinter projects.
+Calendarium - a date picker widget for Tkinter, in one file.
 
 Usage:
 
     from calendarium import Calendarium
     self.start_date = Calendarium(frm_left, "Start Date")
-    # Use either grid *or* pack on the same parent, not both: #
-    self.start_date.grid(row=r, column=c, sticky=tk.W) 
-    self.start_date.pack(padx=2, pady=2)
+    self.start_date.pack(padx=2, pady=2)  # or grid, not both on one parent
     self.start_date.set_today()
 
     Features:
-    - Set current date.
+    - Set current date, or a date some days ago / ahead.
     - Validate via the read-only property is_valid and retrieve selected date.
     - Get a timestamp using the current time of day combined with the selected date.
-    
-Author: Giuseppe Costanzi (1966bc)
-License: GNU GPL v3
-Version: 2.3
+    - Get the date as ISO 8601 text, ready to be stored.
+    - Enable/disable the three fields at once, move the focus to the day.
+
+Version: 2.4
 """
 
 import datetime as _dt
 import tkinter as tk
-from tkinter import messagebox
 
 
 class Calendarium(tk.LabelFrame):
@@ -86,7 +86,15 @@ class Calendarium(tk.LabelFrame):
             try:
                 r, g, b = color
                 color = f"#{r:02x}{g:02x}{b:02x}"
-            except Exception:
+            except (TypeError, ValueError):
+                color = None
+
+        # Formatting never fails on out-of-range values ((300, 0, 0) gives
+        # "#12c0000"): only Tk can tell whether a colour is real, so ask it.
+        if color is not None:
+            try:
+                self.winfo_rgb(color)
+            except tk.TclError:
                 color = None
 
         if color is None:
@@ -103,8 +111,9 @@ class Calendarium(tk.LabelFrame):
 
     @staticmethod
     def _digits_only(action, value, text):
+        # isdecimal, not isdigit: '²'.isdigit() is True but int('²') raises.
         if action == "1":
-            return text.isdigit() or value == ""
+            return text.isdecimal() or value == ""
         return True
 
     def _parse_int(self, var):
@@ -130,6 +139,21 @@ class Calendarium(tk.LabelFrame):
             dt_obj = dt_obj.date()
         self.set_date(dt_obj)
 
+    def set_days_ago(self, days):
+        self.set_date(_dt.date.today() - _dt.timedelta(days=days))
+
+    def set_days_ahead(self, days):
+        self.set_date(_dt.date.today() + _dt.timedelta(days=days))
+
+    def set_state(self, state):
+        """tk.NORMAL or tk.DISABLED, for all three spinboxes at once."""
+        for spin in self._spinboxes.values():
+            spin.configure(state=state)
+
+    def set_focus(self):
+        """Keyboard focus on the day, where an invalid date usually is."""
+        self._spinboxes["day"].focus_set()
+
     @property
     def is_valid(self):
         d = self._parse_int(self.day)
@@ -152,13 +176,22 @@ class Calendarium(tk.LabelFrame):
 
     def get_timestamp(self):
         d = self.get_date()
-        if not d:
+        if d is None:
             return None
         now = _dt.datetime.now().time()
         return _dt.datetime.combine(d, now)
 
+    def get_iso(self):
+        """The date as ISO 8601 text (YYYY-MM-DD), or None if invalid."""
+        d = self.get_date()
+        if d is None:
+            return None
+        return d.isoformat()
+
 
 if __name__ == "__main__":
+    from tkinter import messagebox
+
     root = tk.Tk()
     root.title("Calendarium Demo")
 
