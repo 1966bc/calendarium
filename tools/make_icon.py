@@ -24,7 +24,6 @@ from PIL import Image, ImageDraw
 
 SIZE = 64
 SCALE = 8
-SIDE = SIZE * SCALE
 
 PAPER = (250, 250, 247, 255)
 EDGE = (90, 90, 90, 255)
@@ -52,10 +51,12 @@ PNG = (
 '''
 
 
-def draw():
-    image = Image.new("RGBA", (SIDE, SIDE), (0, 0, 0, 0))
+def draw(size=SIZE):
+    """The icon at size pixels; the social preview asks for a larger one."""
+    side = size * SCALE
+    image = Image.new("RGBA", (side, side), (0, 0, 0, 0))
     pen = ImageDraw.Draw(image)
-    u = SIDE / 64.0  # one pixel of the final icon
+    u = side / 64.0  # one pixel of the icon as drawn at 64
 
     # The page, and its header drawn over the top of it.
     page = (4 * u, 8 * u, 60 * u, 60 * u)
@@ -79,7 +80,7 @@ def draw():
             colour = PICKED if (row, col) == (1, 2) else DAY
             pen.rectangle((x, y, x + 8 * u, y + 6 * u), fill=colour)
 
-    return image.resize((SIZE, SIZE), Image.LANCZOS)
+    return image.resize((size, size), Image.LANCZOS)
 
 
 def write_module(image, path):

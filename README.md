@@ -4,7 +4,7 @@
 validated as you type, with the result as a `datetime.date`. One Python file,
 standard library only: copy it into your project and use it.
 
-![Calendarium demo](docs/screenshot.png)
+![Calendarium demo](https://raw.githubusercontent.com/1966bc/calendarium/master/docs/screenshot.png)
 
 - **No dependencies** — `tkinter` and `datetime`, nothing to install.
 - **One file** — `calendarium.py`, nothing else to carry around.
@@ -25,7 +25,12 @@ sudo apt install python3-tk
 
 ## Installation
 
-Copy `calendarium.py` next to your code. That is all.
+```bash
+pip install calendarium
+```
+
+Or copy `calendarium.py` next to your code: it is one file with no
+dependencies, so that is all it takes, also on a machine without pip.
 
 ## Usage
 
@@ -185,13 +190,14 @@ are skipped.
 calendarium.py      the widget: the one file to copy
 examples/demo.py    a small application that uses it
 tests/              unit tests
-tools/make_icon.py  draws the demo icon (needs Pillow, only to redraw it)
-docs/               the screenshot
+tools/              build tools, they need Pillow: make_icon.py draws the demo
+                    icon, make_social_preview.py the GitHub social preview
+docs/               the screenshots and the social preview
 ```
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+MIT, see [LICENSE](https://github.com/1966bc/calendarium/blob/master/LICENSE).
 
 Author: Giuseppe Costanzi ([1966bc](https://github.com/1966bc)).
 

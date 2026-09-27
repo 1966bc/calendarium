@@ -5,12 +5,22 @@ git log.
 
 ## [Unreleased]
 
+### Added
+
+- Packaging for PyPI: `pyproject.toml` (setuptools, SPDX licence), so
+  `pip install calendarium` works. The version is `calendarium.__version__`,
+  read by the build, instead of a line in the docstring.
+- `tools/make_social_preview.py` composes `docs/social-preview.png`, the
+  1280x640 image GitHub shows when the repository is shared, from
+  `docs/demo-large.png`, a capture of the demo drawn at a larger scale.
+
 ### Changed
 
 - Demo: the Period button is gone - the period is recalculated as you type,
   through `<<DateChanged>>`. A **Date format** choice (Europe, USA, ISO)
   rebuilds the two widgets in the new order, keeping what was typed.
-- README: a section on the date format, `order` and `labels`.
+- README: a section on the date format, `order` and `labels`; installation
+  with pip; absolute links, which PyPI needs.
 
 ## [2.5] - 2026-09-27
 

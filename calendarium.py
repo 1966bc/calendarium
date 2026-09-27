@@ -29,13 +29,13 @@ Usage:
     - Labels and order of the fields (day-month-year, month-day-year,
       year-month-day) chosen by the caller.
     - A <<DateChanged>> virtual event when the date changes.
-
-Version: 2.5
 """
 
 import datetime as _dt
 import tkinter as tk
 from tkinter import ttk
+
+__version__ = "2.5"
 
 #: The three parts in the order they are shown, for each accepted order.
 ORDERS = {
